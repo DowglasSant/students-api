@@ -39,7 +39,7 @@ public class StudentsService {
                 return new Student();
             }
 
-            student.setMatricula(student.getCpf());
+            student.setMatricula(student.getCpf().replaceAll("[^0-9]", ""));
             student.setIdade(calculateAge(student.getDataDeNascimento()));
 
             LocalDateTime currentDate = LocalDateTime.now();
