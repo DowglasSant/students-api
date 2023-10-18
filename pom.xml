@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.dowglassant</groupId>
-	<artifactId>car-register-api</artifactId>
+	<artifactId>student-register-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>car-register-api</name>
-	<description>Car Register API</description>
+	<name>student-register-api</name>
+	<description>Student Register API</description>
 	<properties>
 		<java.version>17</java.version>
 	</properties>

@@ -6,6 +6,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Mapper
 public interface StudentMapper {
@@ -14,5 +15,15 @@ public interface StudentMapper {
 
     StudentDTO studentToStudentDTO(Student student);
 
-    List<StudentDTO> studentsToStudentsDTO(List<Student> students);
+    public default List<StudentDTO> studentsToStudentsDTO(List<Student> students) {
+        return students.stream()
+                .map(student -> new StudentDTO(
+                        student.getId(),
+                        student.getNomeCompleto(),
+                        student.getMatricula(),
+                        student.getSerie(),
+                        String.valueOf(student.getIdade())
+                ))
+                .collect(Collectors.toList());
+    }
 }

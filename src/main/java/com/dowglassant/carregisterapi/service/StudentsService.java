@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -41,6 +42,11 @@ public class StudentsService {
             student.setMatricula(student.getCpf());
             student.setIdade(calculateAge(student.getDataDeNascimento()));
 
+            LocalDateTime currentDate = LocalDateTime.now();
+
+            student.setRegisterDate(currentDate);
+            student.setUpdateDate(currentDate);
+
             Student registeredStudent = studentRepository.save(student);
             log.info("[saveStudent]: Student successfully registered with id: " + registeredStudent.getId());
 
@@ -64,6 +70,88 @@ public class StudentsService {
 
         catch (Exception e) {
             log.error("[listAllStudents]: An exception occurred when trying to list all students: " + e);
+            return null;
+        }
+    }
+
+    public Student updateStudent(String id, Student student) {
+
+        try {
+            Optional<Student> existentStudentOpt = studentRepository.findById(id);
+
+            if(existentStudentOpt.isEmpty()) {
+                log.warn("[updateStudent]: No students found with the id provided.");
+                return new Student();
+            }
+
+            Student existentStudent = existentStudentOpt.get();
+
+            existentStudent.setContatoDoResponsavel(student.getContatoDoResponsavel() != null ? student.getContatoDoResponsavel() : existentStudent.getContatoDoResponsavel());
+
+            existentStudent.setEnderecoEstado(student.getEnderecoEstado() != null ? student.getEnderecoEstado() : existentStudent.getEnderecoEstado());
+            existentStudent.setEnderecoCidade(student.getEnderecoCidade() != null ? student.getEnderecoCidade() : existentStudent.getEnderecoCidade());
+            existentStudent.setEnderecoBairro(student.getEnderecoBairro() != null ? student.getEnderecoBairro() : existentStudent.getEnderecoBairro());
+            existentStudent.setEnderecoRua(student.getEnderecoRua() != null ? student.getEnderecoRua() : existentStudent.getEnderecoRua());
+            existentStudent.setEnderecoNumero(student.getEnderecoNumero() != null ? student.getEnderecoNumero() : existentStudent.getEnderecoNumero());
+
+            existentStudent.setSerie(student.getSerie() != null ? student.getSerie() : existentStudent.getSerie());
+            existentStudent.setIdade(calculateAge(existentStudent.getDataDeNascimento()));
+
+            existentStudent.setUpdateDate(LocalDateTime.now());
+
+            Student updatedStudent = studentRepository.save(existentStudent);
+
+            log.info("[updateStudent]: Student with id " + updatedStudent.getId() + " updated successfully!");
+
+            return updatedStudent;
+        }
+
+        catch (Exception e) {
+            log.error("[updateStudent]: An exception occurred when trying to update the student: " + e);
+            return null;
+        }
+    }
+
+    public void deleteStudent(String id) {
+        try {
+            Optional<Student> existentStudentOpt = studentRepository.findById(id);
+
+            if(existentStudentOpt.isEmpty()) {
+                log.warn("[updateStudent]: No students found with the id provided.");
+                return;
+            }
+
+            Student existentStudent = existentStudentOpt.get();
+
+            studentRepository.delete(existentStudent);
+
+            log.info("[deleteStudent]: Student delete successfully.");
+        }
+
+        catch (Exception e) {
+            log.error("[deleteStudent]: An exception occurred when trying to delete the student: " + e);
+            return;
+        }
+    }
+
+    public List<Student> listStudentsBySerie(String serie) {
+        try {
+            Optional<List<Student>> studentsBySerieDto = studentRepository.findBySerie(serie);
+
+            if(studentsBySerieDto.isEmpty()){
+                log.info("[listStudentsBySerie]: No students found to this serie.");
+                return null;
+            }
+
+            List<Student> studentsBySerie = studentsBySerieDto.get();
+
+            log.info("[listStudentsBySerie]: Students find successfully. " + studentsBySerie.size() + " records found!");
+
+            return studentsBySerie;
+        }
+
+        catch (Exception e) {
+            log.error("[listStudentsBySerie]: An exception occurred when trying to list students by serie: " + e);
             return null;
         }
     }
@@ -118,7 +206,7 @@ public class StudentsService {
     }
 
     private static int calculateAge(String dataDeNascimento) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
         LocalDate dateOfBirth = LocalDate.parse(dataDeNascimento, formatter);
 

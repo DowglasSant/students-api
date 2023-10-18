@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -40,4 +43,8 @@ public class Student {
     private String serie;
 
     private String contatoDoResponsavel;
+
+    private LocalDateTime registerDate;
+
+    private LocalDateTime updateDate;
 }

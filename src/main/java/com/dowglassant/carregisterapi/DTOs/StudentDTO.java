@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class StudentDTO {
 
+    private String id;
+
     private String nomeCompleto;
 
     private String matricula;
